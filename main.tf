@@ -15,7 +15,7 @@ provider "azurerm" {
 
 resource "azurerm_resource_group" "mtc-rg" {
   name     = "mtc-resources"
-  location = "westus"  # Change location
+  location = "westus" # Change location
   tags = {
     environment = "dev"
   }
@@ -96,17 +96,19 @@ resource "azurerm_network_interface" "mtc-nic" {
 }
 
 resource "azurerm_linux_virtual_machine" "mtc-vm" {
-  name                = "mtc-vm"
-  location            = "westus"  # Confirm quota availability in westus
-  resource_group_name = azurerm_resource_group.mtc-rg.name
-  size                = "Standard_B1s"  # Lower cost VM size
-  admin_username      = "adminuser"
+  name                  = "mtc-vm"
+  location              = "westus" # Confirm quota availability in westus
+  resource_group_name   = azurerm_resource_group.mtc-rg.name
+  size                  = "Standard_B1s" # Lower cost VM size
+  admin_username        = "adminuser"
   network_interface_ids = [azurerm_network_interface.mtc-nic.id]
 
   depends_on = [
     azurerm_network_interface.mtc-nic,
     azurerm_subnet.mtc-subnet
   ]
+
+  custom_data = filebase64("customdata.tpl")
 
   admin_ssh_key {
     username   = "adminuser"
